@@ -1,6 +1,7 @@
 package com.jasperreddin.devrant.command;
 
 import com.jasperreddin.devrant.DevRantClient;
+import com.jasperreddin.devrant.command.impl.EXIT;
 import com.jasperreddin.devrant.command.impl.HELP;
 import com.jasperreddin.devrant.command.impl.RANTS;
 
@@ -15,6 +16,7 @@ public class CommandParser {
 	public CommandParser(DevRantClient client) {
 		this.client = client;
 
+		addCommand(new EXIT());
 		addCommand(new HELP(client));
 		addCommand(new RANTS(client.getDevRant(), client));
 	}

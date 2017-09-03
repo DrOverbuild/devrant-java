@@ -65,6 +65,7 @@ public class RANTS implements Command {
 		}
 
 		client.println("Getting rants...");
+		client.println("Sorting by " + sort);
 
 		List<Rant> rants;
 
