@@ -53,7 +53,7 @@ public class RANTS implements Command {
 		}
 
 		if (args.length >= 4) {
-			range = parseRange(args[1]);
+			range = parseRange(args[3]);
 		}
 
 		if (top) {
@@ -61,7 +61,7 @@ public class RANTS implements Command {
 				return false;
 			}
 
-			sort = Sort.TOP(range);
+			sort = Sort.TOP;
 		}
 
 		client.println("Getting rants...");
@@ -69,7 +69,7 @@ public class RANTS implements Command {
 
 		List<Rant> rants;
 
-		Optional<List<Rant>> rantsOpt = devRant.getFeed().getRants();
+		Optional<List<Rant>> rantsOpt = devRant.getFeed().getRants(sort,amount,page);
 
 		if (rantsOpt.isPresent()){
 			rants = rantsOpt.get();
@@ -80,21 +80,29 @@ public class RANTS implements Command {
 
 		client.println("Fetched " + rants.size() + " rants.");
 
+//		if (rants.size() > 0) {
+//			client.println("USER: " + rants.get(0).getUser() + " ID: " + rants.get(0).getId());
+//			client.println("SCORE: " + rants.get(0).getScore() + " VOTE STATE: " + rants.get(0).getVoteState());
+//			client.println("COMMENTS: " + rants.get(0).getCommentCount() + " LINK: " + rants.get(0).getLink());
+//		}
+
 		for (Rant rant : rants) {
 			StringBuilder message = new StringBuilder();
 			if (rant.getUser() != null) {
 				message.append(" - From ").append(rant.getUser().getUsername()).append(": ");
 			}
 			String content = rant.getText();
-//			String content = rant.getContent();
 
-//			int maxCharCount = client.getTerminal().getWidth() - message.length() - 3;
-//
-//			if (content.length() > maxCharCount) {
-//				content = content.substring(0, maxCharCount - 1);
-//			}
+			int maxCharCount = client.getTerminal().getWidth() - message.length() - 3;
 
-			message.append(content).append("...");
+			content = content.replace('\n',' ');
+
+			if (content.length() > maxCharCount) {
+				content = content.substring(0, maxCharCount - 1);
+				message.append(content).append("...");
+			} else {
+				message.append(content);
+			}
 
 			client.println(message.toString());
 		}
@@ -134,6 +142,6 @@ public class RANTS implements Command {
 
 	@Override
 	public String getDesc() {
-		return "List rants by algorithm, recent, or top. Params:\n - amount: amount per page\n - page: page to view";
+		return "List rants by algorithm, recent, or top. Params:\n - amount: amount per page\n - page: page to view (starting at 0)";
 	}
 }

@@ -2,12 +2,14 @@ package com.jasperreddin.devrant;
 
 import com.jasperreddin.devrant.command.CommandParser;
 import com.scorpiac.javarant.DevRant;
+import com.scorpiac.javarant.News;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class DevRantClient {
 
@@ -40,10 +42,32 @@ public class DevRantClient {
 	}
 
 	public void run() {
+
+		ASCIIArt.printDRJ(this);
+
+		println("");
+
+		println("Welcome to DevRant Java, a terminal client written in Java.");
+		println("Loading MOTD...");
+		println("");
+
+		Optional<News> newsOP = devRant.getFeed().getNews();
+
+		if (newsOP.isPresent()){
+			News news = newsOP.get();
+			println(news.getHeadline());
+			println(news.getBody());
+			println(news.getFooter());
+		} else {
+			println("Unable to unwrap MOTD");
+		}
+
+		println("");
+
 		while (true) {
 			String line = lineReader.readLine("devrant > ");
 
-			if (line == null) {
+			if (line == null || line.isEmpty()) {
 				continue;
 			}
 
